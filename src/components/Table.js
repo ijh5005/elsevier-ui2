@@ -8,14 +8,14 @@ function Table(props) {
   const [] = useState("")
 
   const [clinicalStatus, setClinicalStatus] = useState();
-  const [dateRecorded, setDateRecorded] = useState();
   const [verificationStatus, setVerificationStatus] = useState();
   const [resource, setResource] = useState();
 
   const {
     heads,
     list,
-    resources
+    resources,
+    fetchData
   } = props;
 
   return (
@@ -25,7 +25,8 @@ function Table(props) {
 
         <select value={clinicalStatus} onChange={e => {
           e.preventDefault();
-          setClinicalStatus(e.target.value)
+          setClinicalStatus(e.target.value);
+          fetchData(e.target.value, verificationStatus, resource);
         }}>
           <option value=""></option>
           <option value="resolved">resolved</option>
@@ -34,16 +35,18 @@ function Table(props) {
 
         <select value={verificationStatus} onChange={e => {
           e.preventDefault();
-          setVerificationStatus(e.target.value)
+          setVerificationStatus(e.target.value);
+          fetchData(clinicalStatus, e.target.value, resource);
         }}>
           <option value=""></option>
-          <option value="resolved">confirmed</option>
-          <option value="active">differential</option>
+          <option value="confirmed">confirmed</option>
+          <option value="differential">differential</option>
         </select>
 
         <select value={resource} onChange={e => {
           e.preventDefault();
           setResource(e.target.value)
+          fetchData(clinicalStatus, verificationStatus, e.target.value);
         }}>
           <option value=""></option>
           {resources.map((data, i) => <option key={i} value={`${data}`}>{data}</option>)}

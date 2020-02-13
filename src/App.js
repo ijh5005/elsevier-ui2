@@ -47,9 +47,44 @@ const App = () => {
       setResources(data.data.map(d => d.resource.code.text))
     })
   }, []);
+
+  const fetchData = (clinicalStatus, verificationStatus, resource) => {
+    const obj = {
+      "filters": [],
+      "resourceText": ""
+    }
+
+    if(clinicalStatus){
+      obj.filters.push(clinicalStatus)
+    }
+
+    if(verificationStatus){
+      obj.filters.push(verificationStatus)
+    }
+
+    if(resource){
+      obj.filters.push("resource");
+      obj.resourceText = resource;
+    }
+
+    axiosInstance.post("/filter", obj).then(results => {
+      const {
+        data
+      } = results;
+      const list = data.data.map(d => ({
+        clinicalStatus: d.resource.clinicalStatus,
+        dateRecorded: d.resource.dateRecorded,
+        verificationStatus: d.resource.verificationStatus,
+        resource: d.resource.code.text
+      }));
+      setList(list)
+      setResources(data.data.map(d => d.resource.code.text))
+    })
+  }
+
   return (
     <div className="App">
-      <Table list={list} heads={heads} resources={resources}/>
+      <Table list={list} heads={heads} resources={resources} fetchData={fetchData}/>
     </div>
   );
 }
